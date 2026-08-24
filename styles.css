@@ -575,7 +575,28 @@ h1, h2, h3, h4 { margin: 0; font-weight: 600; line-height: 1.06; letter-spacing:
   white-space: nowrap;
   transition: border-color 0.3s var(--ease), color 0.3s var(--ease), box-shadow 0.3s var(--ease);
 }
-.chip:hover { border-color: var(--accent); color: var(--ink); box-shadow: var(--lift-1); }
+.chip:hover,
+.chip:focus-visible {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--paper);
+  box-shadow: var(--lift-1);
+}
+/* these are certificates you can open, so say so */
+.certs-flow .chip { cursor: pointer; }
+.certs-flow .chip::after {
+  content: "\2197";
+  margin-left: 6px;
+  font-size: 0.8em;
+  opacity: 0;
+  transition: opacity 0.25s var(--ease);
+}
+.certs-flow .chip:hover::after,
+.certs-flow .chip:focus-visible::after { opacity: 0.65; }
+
+/* a moving target is hard to click — hold the row still on hover or touch */
+.certs-flow .marquee:hover .marquee__track,
+.certs-flow .marquee.is-held .marquee__track { animation-play-state: paused; }
 
 /* ==========================================================================
    Figures

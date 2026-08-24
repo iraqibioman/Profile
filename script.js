@@ -285,6 +285,26 @@
   })();
 
   /* ======================================================================
+     8b. Hold the certificate rows still while a finger is on them
+     ====================================================================== */
+  (function holdMarquee() {
+    document.querySelectorAll('.certs-flow .marquee').forEach(function (row) {
+      var release;
+      function hold() {
+        clearTimeout(release);
+        row.classList.add('is-held');
+      }
+      function letGo() {
+        release = setTimeout(function () { row.classList.remove('is-held'); }, 2500);
+      }
+      row.addEventListener('touchstart', hold, { passive: true });
+      row.addEventListener('touchend', letGo, { passive: true });
+      row.addEventListener('focusin', hold);
+      row.addEventListener('focusout', letGo);
+    });
+  })();
+
+  /* ======================================================================
      9. Certifications toggle
      ====================================================================== */
   (function certs() {
