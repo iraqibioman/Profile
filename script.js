@@ -180,36 +180,81 @@
   })();
 
   /* ======================================================================
-     5. Counters
+     5. Counters — replay on a loop while the tiles are on screen
      ====================================================================== */
   (function counters() {
     var nums = document.querySelectorAll('[data-count]');
+    var DURATION = 1500;   // how long one count takes
+    var HOLD     = 4500;   // how long the final number rests before replaying
 
-    function run(el) {
-      var target = parseInt(el.getAttribute('data-count'), 10);
-      if (reduced) { el.textContent = target; return; }
-
-      var dur = 1500, t0 = null;
-      function frame(now) {
-        if (t0 === null) t0 = now;
-        var p = Math.min((now - t0) / dur, 1);
-        el.textContent = Math.round(target * (1 - Math.pow(1 - p, 3)));
-        if (p < 1) raf(frame);
-      }
-      raf(frame);
+    if (reduced) {
+      nums.forEach(function (el) { el.textContent = el.getAttribute('data-count'); });
+      return;
     }
 
-    if (!('IntersectionObserver' in window)) { nums.forEach(run); return; }
+    function makeRunner(el) {
+      var target = parseInt(el.getAttribute('data-count'), 10);
+      var visible = false;
+      var timer = null;
+      var frameId = null;
 
+      function count() {
+        var t0 = null;
+        cancelAnimationFrame(frameId);
+        function frame(now) {
+          if (t0 === null) t0 = now;
+          var p = Math.min((now - t0) / DURATION, 1);
+          el.textContent = Math.round(target * (1 - Math.pow(1 - p, 3)));
+          if (p < 1) {
+            frameId = raf(frame);
+          } else if (visible) {
+            timer = setTimeout(count, HOLD);   // rest, then run again
+          }
+        }
+        frameId = raf(frame);
+      }
+
+      return {
+        start: function () {
+          if (visible) return;
+          visible = true;
+          count();
+        },
+        stop: function () {
+          visible = false;
+          clearTimeout(timer);
+          cancelAnimationFrame(frameId);
+        }
+      };
+    }
+
+    if (!('IntersectionObserver' in window)) {
+      nums.forEach(function (el) { el.textContent = el.getAttribute('data-count'); });
+      return;
+    }
+
+    var runners = new WeakMap();
+    nums.forEach(function (el) { runners.set(el, makeRunner(el)); });
+
+    // only animate what is actually being looked at
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (e) {
-        if (!e.isIntersecting) return;
-        run(e.target);
-        io.unobserve(e.target);
+        var r = runners.get(e.target);
+        if (!r) return;
+        if (e.isIntersecting) r.start(); else r.stop();
       });
     }, { threshold: 0.5 });
 
     nums.forEach(function (el) { io.observe(el); });
+
+    // a background tab should not be burning frames
+    document.addEventListener('visibilitychange', function () {
+      nums.forEach(function (el) {
+        var r = runners.get(el);
+        if (!r) return;
+        if (document.hidden) r.stop();
+      });
+    });
   })();
 
   /* ======================================================================
