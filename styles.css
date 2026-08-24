@@ -190,9 +190,67 @@ h1, h2, h3, h4 { margin: 0; font-weight: 600; line-height: 1.06; letter-spacing:
 .link-out:hover { color: var(--accent-ink); border-bottom-color: currentColor; }
 .link-out:hover::after { opacity: 1; transform: translate(2px, -2px); }
 
-/* the certifications list is dense — keep the arrow, drop the underline */
-.cert-all .link-out { border-bottom: 0; }
-.cert-all .link-out:hover { text-decoration: underline; text-underline-offset: 3px; }
+/* ---------- Certificate documents ----------
+   The certificate title opens the actual document; the issuer stays secondary. */
+.cert-doc {
+  color: var(--accent);
+  transition: color 0.25s var(--ease);
+}
+.cert-doc::after {
+  content: "\2197";
+  display: inline-block;
+  margin-left: 3px;
+  font-size: 0.76em;
+  opacity: 0.5;
+  transition: transform 0.25s var(--ease-out), opacity 0.25s var(--ease);
+}
+.cert-doc:hover { color: var(--accent-ink); text-decoration: underline; text-underline-offset: 3px; }
+.cert-doc:hover::after { opacity: 1; transform: translate(2px, -2px); }
+
+.cert-nodoc { color: var(--ink-2); }
+
+/* the issuer is context, not the destination — mute it so the
+   certificate link is the only thing competing for attention */
+.cert-by { color: var(--ink-3); }
+.cert-by .link-out {
+  color: var(--ink-3);
+  border-bottom: 1px dotted var(--hair-2);
+}
+.cert-by .link-out::after { display: none; }
+.cert-by .link-out:hover { color: var(--accent); border-bottom-color: currentColor; }
+
+.edu__card h3 .cert-doc { color: var(--ink); }
+.edu__card h3 .cert-doc:hover { color: var(--accent); }
+
+/* ---------- Supporting-document chip ---------- */
+.doc-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border: 1px solid var(--hair-2);
+  border-radius: 100px;
+  font-family: var(--mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  white-space: nowrap;
+  transition: border-color 0.25s var(--ease), color 0.25s var(--ease), background 0.25s var(--ease);
+}
+.doc-chip::before {
+  content: "";
+  width: 9px; height: 11px;
+  border: 1px solid currentColor;
+  border-radius: 1px;
+  flex: none;
+}
+.doc-chip:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-dim);
+}
+.doc-chip--tile { align-self: flex-start; margin-top: 18px; }
 
 /* ---------- Card + cursor spotlight ---------- */
 .panel {
@@ -836,6 +894,14 @@ h1, h2, h3, h4 { margin: 0; font-weight: 600; line-height: 1.06; letter-spacing:
 }
 
 @media (max-width: 860px) {
+  /* 44 dense rows of inline links are fiddly on a phone —
+     give each certificate its own line and a real tap area */
+  .cert-all li { padding: 6px 0; }
+  .cert-all li > span { display: flex; flex-direction: column; gap: 3px; }
+  .cert-all .cert-doc,
+  .cert-all .cert-nodoc { display: block; padding: 9px 0 3px; line-height: 1.4; }
+  .cert-by { font-size: 0.875rem; padding-bottom: 9px; }
+
   .about, .exp { grid-template-columns: 1fr; }
   .about__sticky, .rail { position: static; }
   .rail__line { display: flex; flex-wrap: wrap; gap: 8px; border-left: 0; padding-left: 0; }
