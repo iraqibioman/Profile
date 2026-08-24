@@ -332,6 +332,7 @@
       send.disabled = true;
       send.textContent = 'Sending';
       note.textContent = '';
+      note.classList.remove('is-ok', 'is-err');
 
       fetch(form.action, {
         method: 'POST',
@@ -341,10 +342,12 @@
         .then(function (r) {
           if (!r.ok) throw new Error();
           form.reset();
-          note.textContent = 'Message sent. I will reply shortly.';
+          note.className = 'form__note is-ok';
+          note.textContent = 'Message sent. It has gone to h.alshibeeb@gmail.com and I will reply shortly.';
         })
         .catch(function () {
-          note.textContent = 'That did not send. Email h.alshibeeb@gmail.com directly.';
+          note.className = 'form__note is-err';
+          note.textContent = 'That did not send. Please email h.alshibeeb@gmail.com directly.';
         })
         .finally(function () {
           send.disabled = false;

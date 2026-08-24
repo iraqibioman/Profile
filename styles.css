@@ -737,7 +737,40 @@ h1, h2, h3, h4 { margin: 0; font-weight: 600; line-height: 1.06; letter-spacing:
 }
 .form textarea { resize: vertical; min-height: 128px; }
 .form .btn { align-self: flex-start; margin-top: 6px; }
-.form__note { margin: 0; min-height: 22px; font-size: 0.875rem; color: var(--ink-2); }
+.form__note {
+  margin: 0;
+  min-height: 0;
+  font-size: 0.9375rem;
+  line-height: 1.45;
+  color: var(--ink-2);
+}
+
+/* a result the user cannot miss */
+.form__note.is-ok,
+.form__note.is-err {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 4px;
+  padding: 14px 16px;
+  border-radius: 13px;
+  font-weight: 500;
+}
+.form__note.is-ok {
+  background: rgba(52, 199, 89, 0.10);
+  border: 1px solid rgba(40, 160, 70, 0.3);
+  color: #1c7a35;
+}
+.form__note.is-err {
+  background: rgba(255, 59, 48, 0.08);
+  border: 1px solid rgba(215, 0, 21, 0.28);
+  color: #c00512;
+}
+.form__note.is-ok::before   { content: "\2713"; font-weight: 700; }
+.form__note.is-err::before  { content: "\0021"; font-weight: 700; }
+
+/* honeypot — hidden from people, tempting to bots */
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
 
 /* ==========================================================================
    Footer
