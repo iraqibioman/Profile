@@ -368,7 +368,7 @@
       open = !open;
       list.classList.toggle('is-open', open);
       apply();
-      btn.textContent = open ? 'Hide the full list' : 'View all 44 certifications';
+      btn.textContent = open ? window.T('cert.hide') : window.T('cert.toggle');
       btn.setAttribute('aria-expanded', String(open));
       if (!open) btn.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'center' });
     });
@@ -395,7 +395,7 @@
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       send.disabled = true;
-      send.textContent = 'Sending';
+      send.textContent = window.T('form.sending');
       note.textContent = '';
       note.classList.remove('is-ok', 'is-err');
 
@@ -408,16 +408,300 @@
           if (!r.ok) throw new Error();
           form.reset();
           note.className = 'form__note is-ok';
-          note.textContent = 'Message sent. It has gone to h.alshibeeb@gmail.com and I will reply shortly.';
+          note.textContent = window.T('form.ok');
         })
         .catch(function () {
           note.className = 'form__note is-err';
-          note.textContent = 'That did not send. Please email h.alshibeeb@gmail.com directly.';
+          note.textContent = window.T('form.err');
         })
         .finally(function () {
           send.disabled = false;
-          send.textContent = 'Send message';
+          send.textContent = window.T('form.send');
         });
     });
   })();
+})();
+
+/* ==========================================================================
+   9. Language switch — English / Arabic
+   ========================================================================== */
+(function () {
+  var AR = {
+    'brand': 'حسن الشبيب',
+    'nav.about': 'نبذة',
+    'nav.experience': 'الخبرة',
+    'nav.projects': 'المشاريع',
+    'nav.education': 'التعليم',
+    'nav.recs': 'التوصيات',
+    'nav.contact': 'تواصل',
+
+    'hero.eyebrow': 'تحليل المعلومات &nbsp;·&nbsp; إدارة البرامج &nbsp;·&nbsp; بغداد، العراق',
+    'hero.name': '<span>حسن</span> <span><em>الشبيب</em></span>',
+    'hero.lede': 'ثمانية عشر عاماً في تحويل الضجيج إلى قرارات — للأمم المتحدة، والوكالة الأمريكية للتنمية الدولية، واليونيدو، وميرسي كور في العراق.',
+    'hero.cta1': 'تواصل معي',
+    'hero.cta2': 'تحميل السيرة الذاتية',
+    'hero.scroll': 'مرِّر',
+
+    'org.unami': 'بعثة الأمم المتحدة لمساعدة العراق',
+    'org.mercy': 'ميرسي كور',
+    'org.csc': 'برنامج الخدمة المدنية',
+    'org.unido': 'منظمة الأمم المتحدة للتنمية الصناعية',
+    'org.cscfull': 'برنامج فيلق الخدمة المدنية',
+    'org.un': 'الأمم المتحدة',
+    'city.baghdad': 'بغداد',
+    'city.kirkuk': 'كركوك',
+    'doc.support': 'وثيقة داعمة',
+    'doc.perf': 'سجلات الأداء',
+
+    'fig.years': 'سنة من<br>الخبرة المهنية',
+    'fig.orgs': 'منظمة<br>دولية',
+    'fig.certs': 'شهادة<br>ودورة تدريبية',
+
+    'about.label': 'نبذة',
+    'about.head': 'المعلومة لا قيمة لها ما لم يستطع أحدهم التصرّف بناءً عليها.',
+    'about.p1': 'على مدى تسع سنوات قدتُ وحدة تحليلية من أربعة أشخاص في بعثة الأمم المتحدة لمساعدة العراق. أنتجنا التقارير الميدانية التي اعتمدت عليها قيادة البعثة — نجمع الأدلة من الميدان، ونكتشف النمط الكامن فيها، ونضعها أمام صنّاع القرار قبل أن تفوت اللحظة.',
+    'about.p2': 'قبل البعثة أدرتُ الاتصالات في برنامج للعدالة تابع للوكالة الأمريكية للتنمية الدولية، وساندتُ مشروعاً وطنياً للمناطق الصناعية في اليونيدو، وقدتُ التوعية في برنامجين وطنيين للمناصرة وبناء السلام في ميرسي كور. علّمني هذا التنوّع كم تختلف قراءة الوزارة والمانح والمنظمة المحلية للحقائق نفسها.',
+    'about.p3': 'أحمل شهادة PMP وماجستير في إدارة الأعمال الدولية، وأعمل يومياً على Power&nbsp;BI وQlik وArcGIS وExcel. كل تقييم أداء سنوي من 2014 إلى 2025 جاء بدرجة «يفوق التوقعات».',
+
+    'exp.label': 'الخبرة',
+    'exp.head': 'ثمانية عشر عاماً، خمس منظمات، ومهمة واحدة: أن تتضح الصورة.',
+
+    'role1.date': 'تشرين الأول 2016 — كانون الأول 2025',
+    'role1.title': 'محلل معلومات أول',
+    'role1.text': 'قدتُ وحدة تحليلية من أربعة أعضاء تُنتج التقارير الميدانية لقيادة البعثة العليا، وقدّمتُ تحليل الاتجاهات الإقليمية الذي شكّل التخطيط الاستراتيجي.',
+    'role1.b1': 'عزّزتُ تبادل المعلومات بين وكالات الأمم المتحدة والشركاء الدوليين والنظراء الحكوميين',
+    'role1.b2': 'نفّذتُ بعثات تقصّي حقائق ميدانية في أنحاء العراق لدعم صياغة السياسات',
+    'role1.b3': 'تمت ترقيتي من درجة NOB إلى درجة NOC',
+
+    'role2.date': 'شباط 2015 — تشرين الأول 2016',
+    'role2.title': 'موظف إداري',
+    'role2.text': 'أدرتُ العمليات الإدارية والموارد البشرية لوحدة التحليل، وتوليتُ دورة التخطيط والموازنة السنوية.',
+    'role2.b1': 'أدرتُ التوظيف والاستقبال والملاك الوظيفي وتقييمات الأداء',
+    'role2.b2': 'أعددتُ تقارير الأداء والتقارير المالية لكبار المسؤولين',
+    'role2.b3': 'تمت ترقيتي من فئة الخدمات العامة إلى فئة الموظفين الوطنيين',
+
+    'role3.date': 'كانون الثاني 2014 — شباط 2015',
+    'role3.title': 'مستشار اتصالات',
+    'role3.prog': '— مشروع الوصول إلى العدالة',
+    'role3.text': 'قدتُ فريق اتصالات وتوعية من أربعة أشخاص، بالعمل مع منظمات شريكة وجهات حكومية لتنفيذ مبادرات قطاع العدالة.',
+    'role3.b1': 'ترأستُ لجنتين متعددتَي المنظمات تضمّان أكثر من 30 شريكاً',
+    'role3.b2': 'كتبتُ موجزات تحليلية أسبوعية شكّلت استراتيجيات استجابة المجتمع المدني',
+    'role3.b3': 'تمت ترقيتي إلى نائب رئيس الوحدة',
+
+    'role4.date': 'آب 2011 — كانون الأول 2013',
+    'role4.title': 'مساعد برامج',
+    'role4.text': 'ساندتُ تصميم وتنفيذ برنامج وطني للمناطق الصناعية بالتعاون مع الوزارات وشركاء الصناعة والخبراء الفنيين.',
+    'role4.b1': 'أجريتُ بحوثاً اقتصادية وصناعية وأعددتُ دراسات الجدوى',
+    'role4.b2': 'أدرتُ قواعد بيانات المشروع والتقارير الميدانية اليومية',
+
+    'role5.date': 'حزيران 2008 — آب 2011',
+    'role5.title': 'موظف اتصالات وتوعية',
+    'role5.text': 'قدتُ التوعية في برنامجين وطنيين للمناصرة وبناء السلام لتعزيز حقوق الفئات المهمّشة والنساء بانيات السلام.',
+    'role5.b1': 'جهة الاتصال الرئيسية مع المانح، وزارة الخارجية الأمريكية / مكتب DRL',
+    'role5.b2': 'أشرفتُ على بوابة إلكترونية متعددة اللغات وخدمة توعية عبر الرسائل النصية',
+    'role5.b3': 'أعددتُ مقترحات المنح ونقلتُ ملاحظات أصحاب المصلحة إلى تصميم البرنامج',
+
+    'role6.date': 'آب 2007 — أيار 2008',
+    'role6.title': 'مدير تقنية المعلومات',
+    'role6.text': 'أدرتُ فريق تقنية معلومات من خمسة أشخاص نفّذ أكثر من 160 مشروعاً رقمياً للخدمة المدنية، وحدّث الأنظمة الإدارية الحكومية ضمن برنامج إعمار مموّل أمريكياً.',
+    'role6.b1': 'بنيتُ أدوات تتبّع المشاريع وإعداد التقارير المستخدمة في تحليل الأداء الفصلي',
+    'role6.b2': 'صمّمتُ ونفّذتُ تدريباً تقنياً للموظفين والمتدربين',
+
+    'proj.label': 'مشاريع مختارة',
+    'proj.head': 'برامج ساهمتُ في تصميمها وإدارتها وإعداد تقاريرها.',
+    'proj.lede': 'خمسة مشاريع شكّلت طريقتي في العمل — في الإعمار والصناعة والعدالة والمناصرة والتحليل.',
+
+    'proj1.title': 'وحدة التحليل المشترك',
+    'proj1.text': 'بنيتُ وقدتُ الوظيفة التحليلية وراء التقارير الميدانية للبعثة. وحدة من أربعة أشخاص تحوّل الأدلة الميدانية وتقارير الوكالات والمصادر المفتوحة إلى تحليل اتجاهات تستخدمه القيادة العليا في التخطيط الاستراتيجي.',
+    'proj1.f1': '<b>4</b> محللين بقيادتي',
+    'proj1.f2': '<b>9</b> سنوات في قيادة الوحدة',
+    'proj1.f3': '<b>12</b> سنة بتقييم «يفوق التوقعات»',
+
+    'proj2.title': 'الوصول إلى العدالة',
+    'proj2.text': 'الاتصالات والتوعية لبرنامج في قطاع العدالة نُفّذ عبر شبكة من المنظمات الشريكة. ترأستُ اللجنتين اللتين نسّقتا بينها، وقدتُ خطط عملها السنوية، وأنتجتُ تقارير التقدّم التي اعتمد عليها المانح.',
+    'proj2.f1': '<b>+30</b> منظمة شريكة',
+    'proj2.f2': '<b>2</b> لجنة برئاستي',
+    'proj2.f3': '<b>4</b> موظفين بإدارتي',
+
+    'proj3.title': 'البرنامج الوطني للمناطق الصناعية',
+    'proj3.text': 'ساندتُ تصميم وتنفيذ برنامج وطني لإنشاء مناطق صناعية في أنحاء العراق، بالعمل مع الوزارات وشركاء الصناعة والخبراء الفنيين. أنتجتُ البحوث الاقتصادية والصناعية التي قامت عليها دراسات الجدوى، وبنيتُ قواعد البيانات التي تتبّعت نشاط البرنامج.',
+    'proj3.f1': 'دراسات جدوى مُعدّة',
+    'proj3.f2': 'تنسيق على مستوى الوزارات',
+    'proj3.f3': 'تقارير ميدانية يومية',
+
+    'proj4.title': 'برامج المناصرة وبناء السلام',
+    'proj4.text': 'برنامجان وطنيان — دعم المناصرة الفعّالة للفئات المهمّشة، وتمكين النساء بانيات السلام. أدرتُ التوعية في كليهما، وكنتُ جهة الاتصال الرئيسية مع المانح، وأشرفتُ على بوابة إلكترونية متعددة اللغات وخدمة رسائل نصية أوصلت المعلومات إلى المجتمعات في أنحاء العراق.',
+    'proj4.f1': '<b>2</b> برنامج وطني',
+    'proj4.f2': 'جهة الاتصال مع وزارة الخارجية الأمريكية / DRL',
+    'proj4.f3': 'توعية متعددة اللغات عبر الويب والرسائل',
+
+    'proj5.title': 'تحديث الخدمة المدنية، كركوك',
+    'proj5.text': 'أدرتُ فريق تقنية المعلومات الذي نفّذ مشاريع الخدمة المدنية الرقمية لمحافظة كركوك ضمن برنامج إعمار مموّل أمريكياً. بنيتُ أدوات التتبّع والتقارير المستخدمة في تحليل الأداء الفصلي، وصمّمتُ التدريب الذي نقل موظفي الحكومة إلى الأنظمة الجديدة.',
+    'proj5.f1': '<b>+160</b> مشروعاً أُنجز في موعده',
+    'proj5.f2': '<b>5</b> موظفي تقنية معلومات بإدارتي',
+    'proj5.f3': 'برامج تدريبية مُصمّمة',
+
+    'exp2.label': 'المهارات',
+    'exp2.head': 'ما أفعله فعلياً كل يوم.',
+    'tile.analysis': 'التحليل',
+    'tile.analysis.head': 'قراءة بيئة مزدحمة بالضجيج، وقول ما تعنيه.',
+    'tile.a1': 'التقارير الميدانية للقيادة العليا',
+    'tile.a2': 'تحليل الاتجاهات والأنماط الإقليمية',
+    'tile.a3': 'تحليل SWOT وتحليل النزاعات',
+    'tile.a4': 'الرصد والتقييم',
+    'tile.a5': 'بعثات تقصّي الحقائق الميدانية',
+    'tile.data': 'البيانات',
+    'tile.d2': 'لوحات Qlik',
+    'tile.d4': 'Excel المتقدّم',
+    'tile.prog': 'البرامج',
+    'tile.p1': 'إدارة المشاريع (PMP)',
+    'tile.p2': 'التخطيط الاستراتيجي',
+    'tile.p3': 'الموازنة والتنبّؤ',
+    'tile.p4': 'إدارة المخاطر',
+    'tile.lang': 'اللغات',
+    'lang.ar': 'العربية',
+    'lang.en': 'الإنجليزية',
+    'lang.ku': 'الكردية',
+    'tile.perf': 'الأداء',
+    'tile.perf.k': 'سنوات متتالية بتقييم<br>«يفوق التوقعات»',
+
+    'edu.label': 'التعليم',
+    'edu.head': 'المؤهلات.',
+    'edu1.title': 'شهادة الماجستير',
+    'edu1.inst': 'جامعة غوليلمو ماركوني',
+    'edu1.note': 'إدارة الأعمال الدولية. المعدل النهائي 110/110، 60 وحدة ECTS.',
+    'edu2.title': 'بكالوريوس علوم',
+    'edu2.inst': 'جامعة بغداد',
+    'edu2.note': 'الأحياء المجهرية، كلية العلوم.',
+    'edu3.inst': 'معهد إدارة المشاريع',
+    'edu3.note': 'شهادة محترف إدارة المشاريع (PMP).',
+    'edu4.title': 'المركز الثالث، الدوحة',
+    'edu4.note': 'دورة التحليلات الإلكترونية والابتكار.',
+
+    'cert.label': 'التطوير المهني',
+    'cert.head': 'أربع وأربعون شهادة، والعدد في ازدياد.',
+    'cert.toggle': 'عرض الشهادات الـ44 كاملة',
+    'cert.hide': 'إخفاء القائمة الكاملة',
+
+    'rec.label': 'التوصيات',
+    'rec.head': 'ما كتبه عني من عملتُ معهم.',
+    'rec.lede': 'سبع رسائل، من بينها رسالتان من الممثلَين الخاصَّين للأمين العام في بعثة الأمم المتحدة. كل واحدة تفتح الوثيقة الأصلية.',
+    'rec1.date': 'كانون الأول 2025',
+    'rec2.date': 'كانون الأول 2024',
+    'rec3.date': 'كانون الأول 2018',
+    'rec4.date': 'شباط 2015',
+    'rec5.date': 'آذار 2014',
+    'rec6.date': 'كانون الثاني 2014',
+    'rec7.date': '2014 — 2025',
+    'rec1.title': 'رسالة تقدير',
+    'rec1.from': 'محمد الحسن — الممثل الخاص للأمين العام، بعثة الأمم المتحدة لمساعدة العراق',
+    'rec2.title': 'رسالة توصية',
+    'rec2.from': 'بعثة الأمم المتحدة لمساعدة العراق',
+    'rec3.title': 'رسالة شكر',
+    'rec3.from': 'يان كوبيش — الممثل الخاص للأمين العام، بعثة الأمم المتحدة لمساعدة العراق',
+    'rec4.title': 'رسالة توصية',
+    'rec4.from': 'الوكالة الأمريكية للتنمية الدولية — مشروع الوصول إلى العدالة',
+    'rec5.title': 'رسالة توصية',
+    'rec5.from': 'ميرسي كور',
+    'rec6.title': 'رسالة تقدير',
+    'rec6.from': 'منظمة الأمم المتحدة للتنمية الصناعية',
+    'rec7.title': 'سجلات الأداء السنوية',
+    'rec7.from': 'اثنتا عشرة سنة متتالية بتقييم «يفوق التوقعات»',
+    'rec.note': 'تتوفّر عند الطلب رسالتا تقدير إضافيتان من وزارة العلوم والتكنولوجيا العراقية.',
+
+    'con.label': 'تواصل',
+    'con.head': 'لنتحدّث.',
+    'con.lede': 'منفتح على أدوار في التحليل وإدارة البرامج والتنمية الدولية.',
+    'con.email': 'البريد الإلكتروني',
+    'con.phone': 'الهاتف',
+    'con.based': 'المقر',
+    'con.city': 'بغداد، العراق',
+    'con.cv': 'السيرة الذاتية',
+    'con.cvlink': 'تحميل PDF',
+
+    'form.name': 'الاسم',
+    'form.email': 'البريد الإلكتروني',
+    'form.subject': 'الموضوع',
+    'form.message': 'الرسالة',
+    'form.send': 'إرسال الرسالة',
+    'form.sending': 'جارٍ الإرسال',
+    'form.ok': 'تم إرسال الرسالة. وصلت إلى h.alshibeeb@gmail.com وسأرد عليك قريباً.',
+    'form.err': 'لم يتم الإرسال. يرجى مراسلتي مباشرة على h.alshibeeb@gmail.com.'
+  };
+
+  /* strings that live only in JS (not in the markup) */
+  var EN_JS = {
+    'cert.toggle': 'View all 44 certifications',
+    'cert.hide': 'Hide the full list',
+    'form.send': 'Send message',
+    'form.sending': 'Sending',
+    'form.ok': 'Message sent. It has gone to h.alshibeeb@gmail.com and I will reply shortly.',
+    'form.err': 'That did not send. Please email h.alshibeeb@gmail.com directly.'
+  };
+
+  var html   = document.documentElement;
+  var toggle = document.getElementById('langToggle');
+  var nodes  = [].slice.call(document.querySelectorAll('[data-i18n]'));
+  var phs    = [].slice.call(document.querySelectorAll('[data-i18n-ph]'));
+  var lang   = 'en';
+
+  /* remember the English exactly as authored */
+  nodes.forEach(function (el) { el._en = el.innerHTML; });
+  phs.forEach(function (el)   { el._enPh = el.getAttribute('placeholder'); });
+
+  /* public lookup used by the cert toggle and the contact form */
+  window.T = function (key) {
+    if (lang === 'ar' && AR[key]) return AR[key];
+    return EN_JS[key] || key;
+  };
+
+  function apply(next) {
+    lang = next;
+
+    nodes.forEach(function (el) {
+      var k = el.getAttribute('data-i18n');
+      el.innerHTML = (lang === 'ar' && AR[k]) ? AR[k] : el._en;
+    });
+
+    phs.forEach(function (el) {
+      var k = el.getAttribute('data-i18n-ph');
+      var v = (lang === 'ar' && AR[k]) ? AR[k] : el._enPh;
+      el.setAttribute('placeholder', v);
+      el.setAttribute('aria-label', v);
+    });
+
+    /* the certification button label depends on whether the list is open */
+    var cb = document.querySelector('[data-cert-toggle]');
+    if (cb) {
+      cb.textContent = cb.getAttribute('aria-expanded') === 'true'
+        ? window.T('cert.hide')
+        : window.T('cert.toggle');
+    }
+
+    html.setAttribute('lang', lang);
+    html.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+
+    if (toggle) {
+      [].slice.call(toggle.querySelectorAll('.lang__opt')).forEach(function (o) {
+        o.classList.toggle('is-on', o.getAttribute('data-lang') === lang);
+      });
+      toggle.setAttribute('aria-label',
+        lang === 'ar' ? 'التبديل إلى الإنجليزية' : 'Switch to Arabic');
+    }
+
+    try { localStorage.setItem('site-lang', lang); } catch (e) {}
+
+    /* the certification list is measured in pixels — remeasure after reflow */
+    window.dispatchEvent(new Event('resize'));
+  }
+
+  if (toggle) {
+    toggle.addEventListener('click', function () {
+      apply(lang === 'ar' ? 'en' : 'ar');
+    });
+  }
+
+  var saved = null;
+  try { saved = localStorage.getItem('site-lang'); } catch (e) {}
+  if (saved === 'ar') apply('ar');
 })();
